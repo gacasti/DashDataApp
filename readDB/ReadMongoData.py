@@ -9,9 +9,11 @@
 
 from pymongo import MongoClient
 import pandas as pd
-DB_USERNAME = "mfibrahim"
-DB_PASSWORD = "Mariam03"
-DB_CLUSTER_URL = "cluster0.7neuk.mongodb.net"
+
+DB_USERNAME = "gacasti"
+DB_PASSWORD = "1234321"
+DB_CLUSTER_URL = "cluster0.jg6vs.mongodb.net"
+
 # Connect the MongoDB
 # ======================
 # Making a Connection with MongoClient
@@ -35,8 +37,16 @@ def getBookings():
     bookings.set_index("_id", inplace=True)
     return bookings
 
+
 # bookings_with_details = pd.merge(bookings, bookingdetails, on="BookingId")
 # print(bookings_with_details)
+
+
+def getAgents():
+    agents_table = db["agents"].find({})
+    agents = pd.DataFrame(agents_table)
+    agents.set_index("_id", inplace=True)
+    return agents
 
 
 def getFees():
@@ -79,3 +89,48 @@ def getProducts():
     products = pd.DataFrame(products_table)
     products.set_index("_id", inplace=True)
     return products
+
+
+def getCustomers():
+    customers_table = db["customers"].find({})
+    customers = pd.DataFrame(customers_table)
+    customers.set_index("_id", inplace=True)
+    return customers
+
+
+# Data collections
+myBookingsDetails = getBookingDetails()
+myBookings = getBookings()
+myProductSuppliers = getProductsSuppliers()
+mySuppliers = getSuppliers()
+myRegions = getRegions()
+myClass = getClasses()
+myAgents = getAgents()
+myCustomers = getCustomers()
+
+# Dataset for: bookings, bookingDetails, supplier, and productSupplier
+bookings_with_details = pd.merge(myBookings, myBookingsDetails, on="BookingId")
+bookings_with_details_and_prod_supplier = pd.merge(bookings_with_details,
+                                                   myProductSuppliers,
+                                                   on="ProductSupplierId")
+booking_sales_by_supplier = pd.merge(bookings_with_details_and_prod_supplier,
+                                     mySuppliers,
+                                     on="SupplierId")
+booking_sales_by_supplier_by_region = pd.merge(booking_sales_by_supplier,
+                                               myRegions,
+                                               on="RegionId")
+
+booking_sales_by_customer = pd.merge(bookings_with_details,
+                                     myCustomers,
+                                     on="CustomerId")
+booking_sales_by_customer_by_agent = pd.merge(booking_sales_by_customer,
+                                              myAgents,
+                                              on="AgentId")
+
+booking_sales_by_region_by_agent = pd.merge(booking_sales_by_customer_by_agent,
+                                            myRegions,
+                                            on="RegionId")
+
+# Dataset for: bookings, bookingDetails, agent, and class
+
+print(booking_sales_by_region_by_agent)

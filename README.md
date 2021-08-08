@@ -1,4 +1,3 @@
 # DashDataApp
-A demo data analysis project using DASH and Plotly.js to be integrated with Travel Experts
-Made for CPRG008 class on August 6, 2021
-By Mostafa Mohamed
+The mgrData.py will generate Travel Experts data for managers to view agancy performance.
+Dash rendering and dash reports created by Gilmar Castillo
