@@ -19,8 +19,13 @@ import pandas as pd
 from readDB import ReadMongoData as db
 import plotly.graph_objects as pgo
 
-# app = dash.Dash(__name__)
-app = dash.Dash("app")
+# To run locally
+# app = dash.Dash("app")
+# app = dash_app.Dash("app")
+
+# To run as service in Azure or similar
+dash_app = dash.Dash(__name__)
+app = dash_app.server
 
 df = db.getBookingDetails()
 df1 = db.booking_sales_by_supplier_by_region
@@ -101,11 +106,16 @@ app.layout = html.Div(children=[
         #     data=df1.to_dict('records'),
         #     page_size=30
     ),
+    html.Div(children=["Base Price by suppliers and regionn ..."]),
+    html.Br(),
     dcc.Graph(figure=fig1),
     dcc.Graph(figure=fig4),
     dcc.Graph(figure=fig5),
     dcc.Graph(figure=fig2)
 ])
 
-# if __name__ == '__main__':
-app.run_server(debug=True)
+if __name__ == '__main__':
+    dash_app.run_server(debug=True)
+
+# To run locally comment out the if statement above
+# and then the following line should be: app.run_server(debug=True)
